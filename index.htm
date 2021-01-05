@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="./style.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.5/jspdf.debug.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.13/jspdf.plugin.autotable.min.js" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
+
+<head>
+	<title>Minutes of Meeting | MOM</title>
+</head>
+
+<body>
+	<div class="wrapper fadeInDown">
+		<div id="formContent">
+            <!-- Tabs Titles -->
+			<h2 class="active mb-3"> Minutes Of Meeting</h2>
+			<!-- Login Form -->
+			<div class="container">
+				<div class="row">
+					<div class="col-6">
+						<label>Date</label>
+					</div>
+					<div class="col-3">
+						<label>From</label>
+					</div>
+					<div class="col-3">
+						<label>Until</label>
+					</div>
+					<div class="col-6">
+						<div class="input-inline">
+							<span class="text-input" id="date-input"></span>
+							<input type="date" id="datepicker" class="input-icon">
+						</div>
+					</div>
+					<div class="col-3">
+						<div class="input-inline">
+							<span class="text-input" id="time-from-input"></span>
+							<input type="time" id="time-from-picker" class="input-icon time-picker">
+						</div>
+					</div>
+					<div class="col-3">
+						<div class="input-inline">
+							<span class="text-input" id="time-until-input"></span>
+							<input type="time" id="time-until-picker" class="input-icon time-picker">
+						</div>
+					</div>
+					<div class="col-lg-12 mt-2">
+						<label>Subject</label>
+						<span class="text-input" id="subject-input" role="textbox" name="subject"
+							contenteditable></span>
+					</div>
+					<div class="col-lg-12 mt-3 section">
+						<h6 class="text-left float-left"><strong>Attendances</strong></h6>
+						<hr class="mt-4">
+						<div class="attendances">
+							<div class="row" id="rowAttendances1">
+								<div class="col-7">
+									<div class="section-form">
+										<label class="index">1.</label>
+										<span class="text-input name-input" role="textbox" name="name[]"
+											contenteditable></span>
+									</div>
+								</div>
+								<div class="col-4">
+									<div class="section-form">
+										<span class="text-input division-input" role="textbox" name="name[]"
+											contenteditable></span>
+									</div>
+								</div>
+							</div>
+						</div>
+						<button type="button" class="fadeIn first btn-success w-100" onclick="addAttendances()">+
+							Add
+							Attendances</button>
+					</div>
+					<div class="col-lg-12 mt-3 section">
+						<h6 class="text-left float-left"><strong>Point of Meetings</strong></h6>
+						<hr class="mt-4">
+						<div class="pom">
+							<div class="row" id="rowPOM1">
+								<div class="col-11">
+									<div class="section-form">
+										<label class="index">1.</label>
+										<span class="textarea pom-input" role="textbox" name="pom[]"
+											contenteditable></span>
+									</div>
+								</div>
+							</div>
+						</div>
+						<button type="button" class="fadeIn first btn-success w-100" onclick="addPOM()">+ Add Point
+							Of Meeting</button>
+					</div>
+					<div class="col-lg-12 mt-3 section">
+						<h6 class="text-left float-left"><strong>Next Actions</strong></h6>
+						<hr class="mt-4">
+						<div class="action">
+							<div class="row mt-3" id="rowAction1">
+								<div class="col-5">
+									<div class="section-form">
+										<label class="index">1.</label>
+										<label class="label">PIC:</label>
+										<span class="text-input pic-input" role="textbox" name="action[]"
+											contenteditable></span>
+									</div>
+								</div>
+								<div class="col-6">
+									<div class="section-form">
+										<label class="label">duedate:</label>
+										<span class="text-input duedate-input" id="duedate-input1" role="textbox"
+											name="name[]" contenteditable></span>
+										<input type="date" id="duedatepicker1" class="input-icon duedatepicker">
+									</div>
+								</div>
+								<div class="col-11">
+									<div class="section-form">
+										<label class="index"></label>
+										<span class="textarea next-action-input" role="textbox" name="action[]"
+											contenteditable></span>
+									</div>
+								</div>
+							</div>
+						</div>
+						<button type="button" class="fadeIn first btn-success w-100" onclick="addAction()">+ Add
+							Action</button>
+					</div>
+				</div>
+			</div>
+
+			<!-- Footer -->
+			<div id="formFooter" class="mt-5">
+                @Philsco
+			</div>
+
+		</div>
+		<button class="fadeIn first" id="btn-print" type="button" onclick="htmlToPdf()">Print MOM</button>
+	</div>
+<script type="text/javascript">
+
+	$(document).ready(function () {
+
+		$('#datepicker').change(function () {
+			if (this.value) {
+				const date = this.value;
+				$('#datepicker').val("");
+				$('#date-input').html(date);
+			}
+		});
+
+		$('#time-from-picker').change(function () {
+			if (this.value) {
+				const time = this.value;
+				$('#time-from-picker').val("");
+				$('#time-from-input').html(time);
+			}
+		});
+
+		$('#time-until-picker').change(function () {
+			if (this.value) {
+				const time = this.value;
+				$('#time-until-picker').val("");
+				$('#time-until-input').html(time);
+			}
+		});
+
+		$(document).on('change', '.duedatepicker', function () {
+			if (this.value) {
+				const date = this.value;
+				$("#" + this.id).val("");
+				$("#" + this.id).prev().html(date);
+			}
+		});
+
+	});
+
+	function addAttendances() {
+		var id = $(".attendances").children().length + 1
+		var html = `<div class="row" id="rowAttendances${id}">
+						<div class="col-7">
+							<div class="section-form">
+								<label class="index">${id}.</label>
+								<span class="text-input name-input" role="textbox" name="name[]" contenteditable></span>
+							</div>
+						</div>
+						<div class="col-4">
+							<div class="section-form">
+								<span class="text-input division-input" role="textbox" name="name[]" contenteditable></span>
+							</div>
+						</div>
+						<div class="col-1">
+							<button type="button" class="fadeIn first btn-danger btn-remove-attendances" onclick="removeAttendances('${id}')">X</button>
+						</div>
+					</div>`
+		$(".attendances").append(html);
+		$("#rowAttendances" + id + "> div > div > .text-input").focus()
+	}
+
+	function removeAttendances(id) {
+		$("#rowAttendances" + id).remove();
+	}
+
+	function addPOM() {
+		var id = $(".pom").children().length + 1
+		var html = `<div class="row" id="rowPOM${id}">
+						<div class="col-11">
+							<div class="section-form">
+								<label class="index">${id}.</label>
+								<span class="textarea" role="textbox" name="pom[]" contenteditable></span>
+							</div>
+						</div>
+						<div class="col-1">
+							<button type="button" class="fadeIn first btn-danger btn-remove" onclick="removePOM('${id}')">X</button>
+						</div>
+					</div>`
+		$(".pom").append(html);
+		$("#rowPOM" + id + "> div > div > .textarea").focus()
+	}
+
+	function removePOM(id) {
+		$("#rowPOM" + id).remove();
+	}
+
+	function addAction() {
+		var id = $(".action").children().length + 1
+		var html = `<div class="row mt-3" id="rowAction${id}">
+						<div class="col-5">
+							<div class="section-form">
+								<label class="index">${id}.</label>
+								<label class="label">PIC:</label>
+								<span class="text-input pic-input" role="textbox" name="action[]"
+									contenteditable></span>
+							</div>
+						</div>
+						<div class="col-6">
+							<div class="section-form">
+								<label class="label">duedate:</label>
+								<span class="text-input duedate-input" id="duedate-input${id}" role="textbox" name="name[]"
+									contenteditable></span>
+								<input type="date" id="duedatepicker${id}" class="input-icon duedatepicker">
+							</div>
+						</div>
+						<div class="col-1">
+							<button type="button" class="fadeIn first btn-danger btn-remove" onclick="removeAction('${id}')">X</button>
+						</div>
+						<div class="col-11">
+							<div class="section-form">
+								<label class="index"></label>
+								<span class="textarea next-action-input" role="textbox" name="action[]"
+									contenteditable></span>
+							</div>
+						</div>
+					</div>`
+		$(".action").append(html);
+		$("#rowAction" + id + "> div > div > .textarea").focus()
+	}
+
+	function removeAction(id) {
+		$("#rowAction" + id).remove();
+	}
+
+	function getRandomInt(min, max) {
+		min = Math.ceil(min);
+		max = Math.floor(max);
+		return Math.floor(Math.random() * (max - min + 1)) + min;
+	}
+
+	function htmlToPdf() {
+		$(".btn-success").hide();
+		var element = document.getElementById('formContent');
+		var opt = {
+			margin: 2,
+			filename: 'document.pdf',
+			image: { type: 'jpeg', quality: 0.98 },
+			html2canvas: { dpi: 192, letterRendering: true },
+			jsPDF: { unit: 'cm', format: 'a4', orientation: 'portrait' },
+			pagebreak: { mode: ['css'] }
+		};
+		html2pdf().set(opt).from(element).toPdf().get('pdf').then(function (pdf) {
+			$(".btn-success").show();
+			window.open(pdf.output('bloburl'), '_blank');
+		});
+	}
+
+	function generatePDF() {
+		// get value input
+		var date = $("input[name='date']").val();
+		var time1 = $("input[name='time1']").val();
+		var time2 = $("input[name='time2']").val();
+		var subject = $("input[name='subject']").val();
+		var names = $('input[name="name[]"]').map(function () {
+			return this.value;
+		}).get();
+		var poms = $('span[name="pom[]"]').map(function () {
+			return this.textContent;
+		}).get();
+		var actions = $('span[name="action[]"]').map(function () {
+			return this.textContent;
+		}).get();
+		var doc = new jsPDF('p', 'mm', 'a4')
+
+		// print header
+		doc.setFontSize(16);
+		doc.text('Minutes Of Meeting', 105, 15, 'center');
+
+		// print time info
+		doc.setFontSize(14);
+		doc.text(moment(date).format('DD MMMM YYYY') + " From " + time1 + " Until " + time2, 105, 23, 'center');
+
+		// print line
+		doc.line(35, 30, 175, 30);
+
+		// print subject:
+		doc.setFontSize(10);
+		doc.text('Subject:', 16, 40);
+
+		// print subject
+		doc.setFontSize(14);
+		var splitsubject = doc.splitTextToSize(subject, 180);
+		doc.text(splitsubject, 16, 47);
+
+		// margin before
+		var dim = doc.getTextDimensions(splitsubject);
+
+		// table attendances
+		doc.setFontSize(14);
+		arrayattendances = [];
+		for (var i = 0; i < names.length; i++) {
+			arrayattendances.push({ "name": names[i] });
+		}
+		var colattendances = ["Attendances"];
+		var rowsattendance = [];
+		arrayattendances.forEach(element => {
+			var tempattendance = [element.name];
+			rowsattendance.push(tempattendance);
+		});
+		var heightPoint1 = 40 + 10;
+		doc.autoTable(colattendances, rowsattendance, { startX: 10, startY: heightPoint1 });
+
+		// margin before
+		var dim2 = doc.getTextDimensions(rowsattendance);
+
+		// table pom
+		doc.setFontSize(14);
+		arraypom = [];
+		for (var i = 0; i < poms.length; i++) {
+			arraypom.push({ "pom": poms[i] });
+		}
+		var colpom = ["Point Of Meeting"];
+		var rowspom = [];
+		arraypom.forEach(element => {
+			var temppom = [element.pom];
+			rowspom.push(temppom);
+
+		});
+		var heightPoint2 = 40 + (names.length * 10) + 10 + 5;
+		doc.autoTable(colpom, rowspom, { startX: 10, startY: heightPoint2 });
+
+		// margin before
+		var dim3 = doc.getTextDimensions(rowspom);
+
+		// table action
+		doc.setFontSize(14);
+		arrayaction = [];
+		for (var i = 0; i < actions.length; i++) {
+			arrayaction.push({ "action": actions[i] });
+		}
+		var colaction = ["Action"];
+		var rowsaction = [];
+		arrayaction.forEach(element => {
+			var tempaction = [element.action];
+			rowsaction.push(tempaction);
+
+		});
+		var heightPoint3 = 40 + (names.length * 10) + (poms.length * 10) + 10 + 10;
+		doc.autoTable(colaction, rowsaction, { startX: 10, startY: heightPoint3 });
+
+		doc.setFontSize(10);
+
+		// print pdf
+		doc.save('mom-' + date + '.pdf');
+	}
+</script>
+</html>
